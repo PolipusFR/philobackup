@@ -6,7 +6,7 @@
 /*   By: lsabatie <lsabatie@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/10/19 18:13:48 by lsabatie          #+#    #+#             */
-/*   Updated: 2023/12/22 14:54:38 by lsabatie         ###   ########.fr       */
+/*   Updated: 2023/12/22 18:50:36 by lsabatie         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -61,6 +61,8 @@ void	init_philos(t_data *data)
 		data->philos[i].eat_count = 0;
 		data->philos[i].dead = 0;
 		data->philos[i].time_to_die = data->time_to_die;
+		if (data->philos[i].id % 2 == 0)
+			usleep(1);
 		pthread_mutex_init(&data->philos[i].lock, NULL);
 		i++;
 	}
@@ -96,14 +98,17 @@ long long unsigned	get_time(void)
 		return (-1);
 	return ((tv.tv_sec * (long long unsigned int)1000) + (tv.tv_usec / 1000));
 }
-
-void	eat(t_philo *philo)
+void	take_forks(t_philo *philo)
 {
 	pthread_mutex_lock(philo->left_fork);
 	message("has taken a fork", philo);
 	pthread_mutex_lock(philo->right_fork);
 	message("has taken a fork", philo);
+}
 
+void	eat(t_philo *philo)
+{
+	take_forks(philo);
 	pthread_mutex_lock(&philo->lock);
 	philo->eating = 1;
 	philo->time_to_die = philo->data->time_to_die + get_time();
@@ -173,6 +178,8 @@ void	*routine(void *philo_pointer)
 		eat(philo);
 		message("is thinking", philo);
 	}
+	if (pthread_join(philo->thread, NULL))
+		return((void *)1);
 	return ((void *)0);
 }
 
@@ -185,8 +192,8 @@ int	main(int ac, char **av)
 	if (ac < 5 || ac > 6)
 		return (1);
 	init_av(ac, av, &data);
-	init_philos(&data);
 	init_forks(&data);
+	init_philos(&data);
 	data.start_time = get_time();
 	while (i < data.number_of_philosophers)
 	{
