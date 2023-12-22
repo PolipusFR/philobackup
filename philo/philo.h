@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   philo.h                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: lsabatie <lsabatie@student.42.fr>          +#+  +:+       +#+        */
+/*   By: lsabatie <lsabatie@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/10/19 18:15:24 by lsabatie          #+#    #+#             */
-/*   Updated: 2023/12/18 18:00:36 by lsabatie         ###   ########.fr       */
+/*   Updated: 2023/12/22 14:47:57 by lsabatie         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,8 +27,9 @@ typedef struct	s_philo
 	struct s_data	*data;
 	int	id;
 	int	dead;
-	int eat_cont;
+	int eat_count;
 	int eating;
+	long long unsigned int time_to_die;
 	pthread_mutex_t lock;
 	pthread_mutex_t *left_fork;
 	pthread_mutex_t *right_fork;
@@ -40,9 +41,8 @@ typedef struct	s_data
 	t_philo	*philos;
 	int	dead;
 	int	finished;
-	int	death_time;
     int	number_of_philosophers;
-	int	time_to_die;
+	long long unsigned int	time_to_die;
 	int	time_to_eat;
 	int	time_to_sleep;
 	int	number_of_meals;
