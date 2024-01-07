@@ -6,7 +6,7 @@
 /*   By: lsabatie <lsabatie@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/10/19 18:15:24 by lsabatie          #+#    #+#             */
-/*   Updated: 2023/12/22 14:47:57 by lsabatie         ###   ########.fr       */
+/*   Updated: 2023/12/24 16:34:16 by lsabatie         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -47,7 +47,7 @@ typedef struct	s_data
 	int	time_to_sleep;
 	int	number_of_meals;
 	long long unsigned start_time;
-	
+		
 	pthread_mutex_t	*forks;
 	pthread_mutex_t	lock;
 	pthread_mutex_t	write;

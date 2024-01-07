@@ -6,7 +6,7 @@
 /*   By: lsabatie <lsabatie@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/10/19 18:13:48 by lsabatie          #+#    #+#             */
-/*   Updated: 2023/12/22 18:50:36 by lsabatie         ###   ########.fr       */
+/*   Updated: 2023/12/24 19:04:56 by lsabatie         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -41,6 +41,7 @@ void	init_av(int ac, char **av, t_data *data)
 	data->philos = malloc (sizeof(t_philo) * data->number_of_philosophers);
 	if (!data->philos)
 		return ;
+	data->finished = 0;
 	pthread_mutex_init(&data->write, NULL);
 	pthread_mutex_init(&data->lock, NULL);
 	if (!data->philos)
@@ -61,8 +62,6 @@ void	init_philos(t_data *data)
 		data->philos[i].eat_count = 0;
 		data->philos[i].dead = 0;
 		data->philos[i].time_to_die = data->time_to_die;
-		if (data->philos[i].id % 2 == 0)
-			usleep(1);
 		pthread_mutex_init(&data->philos[i].lock, NULL);
 		i++;
 	}
@@ -98,6 +97,7 @@ long long unsigned	get_time(void)
 		return (-1);
 	return ((tv.tv_sec * (long long unsigned int)1000) + (tv.tv_usec / 1000));
 }
+
 void	take_forks(t_philo *philo)
 {
 	pthread_mutex_lock(philo->left_fork);
@@ -150,13 +150,13 @@ void *supervisor(void *philo_pointer)
 		pthread_mutex_lock(&philo->lock);
 		if (get_time() >= philo->time_to_die && philo->eating == 0)
 		{
-			printf("time to die : %lld\n", philo->time_to_die);
+			// printf("time to die : %lld\n", philo->time_to_die);
 			message("died", philo);
 		}
 		if (philo->eat_count == philo->data->number_of_meals)
 		{
 			pthread_mutex_lock(&philo->data->lock);
-			philo->data->finished = 1;
+			philo->data->finished++;
 			philo->eat_count++;
 			pthread_mutex_unlock(&philo->data->lock);
 		}
@@ -171,9 +171,11 @@ void	*routine(void *philo_pointer)
 
 	philo = philo_pointer;
 	philo->time_to_die = philo->data->time_to_die + get_time();
+	if (philo->id % 2 == 0)
+		usleep(1000);
 	if (pthread_create(&philo->thread, NULL, &supervisor, philo))
 		return ((void *)0);
-	while(philo->data->dead == 0)
+	while(philo->data->dead == 0 && philo->data->finished < philo->data->number_of_philosophers)
 	{
 		eat(philo);
 		message("is thinking", philo);
