@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   main.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: lsabatie <lsabatie@student.42lyon.fr>      +#+  +:+       +#+        */
+/*   By: lsabatie <lsabatie@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/10/19 18:13:48 by lsabatie          #+#    #+#             */
-/*   Updated: 2023/12/24 19:04:56 by lsabatie         ###   ########.fr       */
+/*   Updated: 2024/01/19 23:48:55 by lsabatie         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -89,6 +89,8 @@ void	init_forks(t_data *data)
 	}
 }
 
+
+
 long long unsigned	get_time(void)
 {
 	struct timeval	tv;
@@ -98,12 +100,31 @@ long long unsigned	get_time(void)
 	return ((tv.tv_sec * (long long unsigned int)1000) + (tv.tv_usec / 1000));
 }
 
+int	ft_usleep(long long unsigned time)
+{
+	long long unsigned	start;
+
+	start = get_time();
+	while ((get_time() - start) < time)
+		usleep(time / 10);
+	return (0);
+}
 void	take_forks(t_philo *philo)
 {
-	pthread_mutex_lock(philo->left_fork);
-	message("has taken a fork", philo);
-	pthread_mutex_lock(philo->right_fork);
-	message("has taken a fork", philo);
+	if (philo->id % 2 == 0)
+	{
+		pthread_mutex_lock(philo->left_fork);
+		message("has taken a fork", philo);
+		pthread_mutex_lock(philo->right_fork);
+		message("has taken a fork", philo);
+	}
+	else
+	{
+		pthread_mutex_lock(philo->right_fork);
+		message("has taken a fork", philo);
+		pthread_mutex_lock(philo->left_fork);
+		message("has taken a fork", philo);
+	}
 }
 
 void	eat(t_philo *philo)
@@ -114,20 +135,20 @@ void	eat(t_philo *philo)
 	philo->time_to_die = philo->data->time_to_die + get_time();
 	message("is eating", philo);
 	philo->eat_count++;
-	usleep(philo->data->time_to_eat * 1000);
+	ft_usleep(philo->data->time_to_eat);
 	philo->eating = 0;
 	pthread_mutex_unlock(&philo->lock);
-
 	pthread_mutex_unlock(philo->left_fork);
 	pthread_mutex_unlock(philo->right_fork);
 	message("is sleeping", philo);
-	usleep(philo->data->time_to_sleep * 1000);
+	ft_usleep(philo->data->time_to_sleep);
 }
 
 void	message(char *str, t_philo *philo)
 {
 	long long unsigned int	time;
 
+	pthread_mutex_lock(&philo->data->lock);
 	pthread_mutex_lock(&philo->data->write);
 	time = get_time() - philo->data->start_time;
 	if (ft_strcmp("died", str) == 0 && philo->data->dead == 0)
@@ -138,6 +159,19 @@ void	message(char *str, t_philo *philo)
 	if (!philo->data->dead)
 		printf("%llu %d %s\n", time, philo->id, str);
 	pthread_mutex_unlock(&philo->data->write);
+	pthread_mutex_unlock(&philo->data->lock);
+}
+
+int	is_dead(t_philo *philo)
+{
+	pthread_mutex_lock(&philo->data->lock);
+	if (philo->data->dead == 0)
+	{
+		pthread_mutex_unlock(&philo->data->lock);
+		return(1);
+	}
+	pthread_mutex_unlock(&philo->data->lock);
+	return (0);
 }
 
 void *supervisor(void *philo_pointer)
@@ -145,12 +179,11 @@ void *supervisor(void *philo_pointer)
 	t_philo	*philo;
 	
 	philo = philo_pointer;
-	while(philo->data->dead == 0)
+	while(is_dead(philo))
 	{
 		pthread_mutex_lock(&philo->lock);
 		if (get_time() >= philo->time_to_die && philo->eating == 0)
 		{
-			// printf("time to die : %lld\n", philo->time_to_die);
 			message("died", philo);
 		}
 		if (philo->eat_count == philo->data->number_of_meals)
@@ -172,10 +205,10 @@ void	*routine(void *philo_pointer)
 	philo = philo_pointer;
 	philo->time_to_die = philo->data->time_to_die + get_time();
 	if (philo->id % 2 == 0)
-		usleep(1000);
+		ft_usleep(10);
 	if (pthread_create(&philo->thread, NULL, &supervisor, philo))
 		return ((void *)0);
-	while(philo->data->dead == 0 && philo->data->finished < philo->data->number_of_philosophers)
+	while(is_dead(philo) && philo->data->finished < philo->data->number_of_philosophers)
 	{
 		eat(philo);
 		message("is thinking", philo);
@@ -196,12 +229,12 @@ int	main(int ac, char **av)
 	init_av(ac, av, &data);
 	init_forks(&data);
 	init_philos(&data);
+	ft_usleep(100);
 	data.start_time = get_time();
 	while (i < data.number_of_philosophers)
 	{
 		if (pthread_create(&data.tid[i], NULL, &routine, &data.philos[i]))
 			return(-1);
-		usleep(1);
 		i++;
 	}
 	i = 0;
