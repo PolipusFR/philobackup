@@ -6,7 +6,7 @@
 /*   By: lsabatie <lsabatie@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/10/19 18:13:48 by lsabatie          #+#    #+#             */
-/*   Updated: 2024/01/19 23:48:55 by lsabatie         ###   ########.fr       */
+/*   Updated: 2024/01/26 00:04:57 by lsabatie         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -62,6 +62,7 @@ void	init_philos(t_data *data)
 		data->philos[i].eat_count = 0;
 		data->philos[i].dead = 0;
 		data->philos[i].time_to_die = data->time_to_die;
+		data->program_end = 0;
 		pthread_mutex_init(&data->philos[i].lock, NULL);
 		i++;
 	}
@@ -151,12 +152,12 @@ void	message(char *str, t_philo *philo)
 	pthread_mutex_lock(&philo->data->lock);
 	pthread_mutex_lock(&philo->data->write);
 	time = get_time() - philo->data->start_time;
-	if (ft_strcmp("died", str) == 0 && philo->data->dead == 0)
+	if (ft_strcmp("died", str) == 0 && philo->data->program_end == 0)
 	{
 		printf("%llu %d %s\n", time, philo->id, str);
-		philo->data->dead = 1;
+		philo->data->program_end = 1;
 	}
-	if (!philo->data->dead)
+	if (!philo->data->program_end)
 		printf("%llu %d %s\n", time, philo->id, str);
 	pthread_mutex_unlock(&philo->data->write);
 	pthread_mutex_unlock(&philo->data->lock);
@@ -165,7 +166,7 @@ void	message(char *str, t_philo *philo)
 int	is_dead(t_philo *philo)
 {
 	pthread_mutex_lock(&philo->data->lock);
-	if (philo->data->dead == 0)
+	if (philo->data->program_end == 0)
 	{
 		pthread_mutex_unlock(&philo->data->lock);
 		return(1);
@@ -213,9 +214,23 @@ void	*routine(void *philo_pointer)
 		eat(philo);
 		message("is thinking", philo);
 	}
-	if (pthread_join(philo->thread, NULL))
+	if (!pthread_join(philo->thread, NULL))
 		return((void *)1);
-	return ((void *)0);
+	return (NULL);
+}
+
+void	destroy(t_data *data)
+{
+	if (data)
+	{
+		if (data->tid)
+			free (data->tid);
+		if (data->philos)
+			free (data->philos);
+		if (data->forks)
+			free (data->forks);
+	}
+	return ;
 }
 
 int	main(int ac, char **av)
@@ -240,9 +255,10 @@ int	main(int ac, char **av)
 	i = 0;
 	while (i < data.number_of_philosophers)
 	{
-		if (pthread_join(data.tid[i], NULL))
+		if (pthread_join(data.tid[i], NULL) != 0)
 			return (-1);
 		i++;
 	}
+	destroy(&data);
 	return (0);
 }
