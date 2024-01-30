@@ -6,7 +6,7 @@
 /*   By: lsabatie <lsabatie@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/10/19 18:13:48 by lsabatie          #+#    #+#             */
-/*   Updated: 2024/01/26 00:04:57 by lsabatie         ###   ########.fr       */
+/*   Updated: 2024/01/30 04:18:53 by lsabatie         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -41,7 +41,6 @@ void	init_av(int ac, char **av, t_data *data)
 	data->philos = malloc (sizeof(t_philo) * data->number_of_philosophers);
 	if (!data->philos)
 		return ;
-	data->finished = 0;
 	pthread_mutex_init(&data->write, NULL);
 	pthread_mutex_init(&data->lock, NULL);
 	if (!data->philos)
@@ -59,10 +58,11 @@ void	init_philos(t_data *data)
 		data->philos[i].data = data;
 		data->philos[i].id = i + 1;
 		data->philos[i].eating = 0;
-		data->philos[i].eat_count = 0;
+		data->philos[i].meals_eaten = 0;
 		data->philos[i].dead = 0;
 		data->philos[i].time_to_die = data->time_to_die;
 		data->program_end = 0;
+		data->philos_finished_eating = 0;
 		pthread_mutex_init(&data->philos[i].lock, NULL);
 		i++;
 	}
@@ -89,8 +89,6 @@ void	init_forks(t_data *data)
 		i++;
 	}
 }
-
-
 
 long long unsigned	get_time(void)
 {
@@ -133,15 +131,24 @@ void	eat(t_philo *philo)
 	take_forks(philo);
 	pthread_mutex_lock(&philo->lock);
 	philo->eating = 1;
-	philo->time_to_die = philo->data->time_to_die + get_time();
 	message("is eating", philo);
-	philo->eat_count++;
+	philo->time_to_die = philo->data->time_to_die + get_time();
 	ft_usleep(philo->data->time_to_eat);
 	philo->eating = 0;
+	philo->meals_eaten++;
 	pthread_mutex_unlock(&philo->lock);
 	pthread_mutex_unlock(philo->left_fork);
 	pthread_mutex_unlock(philo->right_fork);
 	message("is sleeping", philo);
+	if (philo->data->number_of_meals != -1)
+	{
+		pthread_mutex_lock(&philo->data->lock);
+		if (philo->meals_eaten == philo->data->number_of_meals)
+			philo->data->philos_finished_eating++;
+		if (philo->data->philos_finished_eating >= philo->data->number_of_philosophers)
+			philo->data->program_end = 1;
+		pthread_mutex_unlock(&philo->data->lock);
+	}
 	ft_usleep(philo->data->time_to_sleep);
 }
 
@@ -157,13 +164,13 @@ void	message(char *str, t_philo *philo)
 		printf("%llu %d %s\n", time, philo->id, str);
 		philo->data->program_end = 1;
 	}
-	if (!philo->data->program_end)
+	if (philo->data->program_end == 0)
 		printf("%llu %d %s\n", time, philo->id, str);
 	pthread_mutex_unlock(&philo->data->write);
 	pthread_mutex_unlock(&philo->data->lock);
 }
 
-int	is_dead(t_philo *philo)
+int	is_finished(t_philo *philo)
 {
 	pthread_mutex_lock(&philo->data->lock);
 	if (philo->data->program_end == 0)
@@ -180,20 +187,11 @@ void *supervisor(void *philo_pointer)
 	t_philo	*philo;
 	
 	philo = philo_pointer;
-	while(is_dead(philo))
+	while(is_finished(philo))
 	{
 		pthread_mutex_lock(&philo->lock);
 		if (get_time() >= philo->time_to_die && philo->eating == 0)
-		{
 			message("died", philo);
-		}
-		if (philo->eat_count == philo->data->number_of_meals)
-		{
-			pthread_mutex_lock(&philo->data->lock);
-			philo->data->finished++;
-			philo->eat_count++;
-			pthread_mutex_unlock(&philo->data->lock);
-		}
 		pthread_mutex_unlock(&philo->lock);
 	}
 	return ((void *)0);
@@ -209,8 +207,10 @@ void	*routine(void *philo_pointer)
 		ft_usleep(10);
 	if (pthread_create(&philo->thread, NULL, &supervisor, philo))
 		return ((void *)0);
-	while(is_dead(philo) && philo->data->finished < philo->data->number_of_philosophers)
+	while(is_finished(philo))
 	{
+		if (philo->data->number_of_philosophers % 2 == 1)
+			usleep(10);
 		eat(philo);
 		message("is thinking", philo);
 	}
@@ -233,6 +233,14 @@ void	destroy(t_data *data)
 	return ;
 }
 
+void	case_one(t_data *data)
+{
+	printf("0 1 has taken a fork\n");
+	ft_usleep(data->time_to_die);
+	printf("%llu 1 has died\n", data->time_to_die);
+	return ;
+}
+
 int	main(int ac, char **av)
 {
 	t_data	data;
@@ -240,8 +248,16 @@ int	main(int ac, char **av)
 
 	i = 0;
 	if (ac < 5 || ac > 6)
+	{
+		printf("Error: Wrong number of arguments\n");
 		return (1);
-	init_av(ac, av, &data);
+	}
+	init_av(ac, av, &data); // need to check if args are numbers
+	if (data.number_of_philosophers == 1)
+	{
+		case_one(&data);
+		return (0);
+	}
 	init_forks(&data);
 	init_philos(&data);
 	ft_usleep(100);

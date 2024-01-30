@@ -6,7 +6,7 @@
 /*   By: lsabatie <lsabatie@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/10/19 18:15:24 by lsabatie          #+#    #+#             */
-/*   Updated: 2024/01/25 22:49:29 by lsabatie         ###   ########.fr       */
+/*   Updated: 2024/01/26 03:05:20 by lsabatie         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,7 +27,7 @@ typedef struct	s_philo
 	struct s_data	*data;
 	int	id;
 	int	dead;
-	int eat_count;
+	int meals_eaten;
 	int eating;
 	long long unsigned int time_to_die;
 	pthread_mutex_t lock;
@@ -39,9 +39,9 @@ typedef struct	s_data
 {
 	pthread_t	*tid;
 	t_philo	*philos;
-	int	program_end;
-	int	finished;
-    int	number_of_philosophers;
+	int	program_end; // the program should end, either a philo died or they ate enough
+    int philos_finished_eating; // number of philos that ate the correct number of meals
+	int	number_of_philosophers;
 	long long unsigned int	time_to_die;
 	int	time_to_eat;
 	int	time_to_sleep;

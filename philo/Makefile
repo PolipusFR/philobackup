@@ -1,7 +1,7 @@
 HEADER  := philo.h
 NAME	:= philo
 CC		:= gcc
-FLAGS	:= -Wall -Wextra -Werror -g3
+FLAGS	:= -Wall -Wextra -Werror
 SRCS	:=	main.c \
 			ft_atoi.c \
                           
