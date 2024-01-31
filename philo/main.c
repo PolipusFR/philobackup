@@ -6,181 +6,11 @@
 /*   By: lsabatie <lsabatie@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/10/19 18:13:48 by lsabatie          #+#    #+#             */
-/*   Updated: 2024/01/30 04:18:53 by lsabatie         ###   ########.fr       */
+/*   Updated: 2024/01/31 03:27:37 by lsabatie         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "philo.h"
-
-void	message(char *str, t_philo *philo);
-
-int	ft_strcmp(char *s1, char *s2)
-{
-	int	i;
-
-	i = 0;
-	while (s1[i] && s1[i] == s2[i])
-		i++;
-	return (s1[i] - s2[i]);
-}
-
-// this function will assign main arguments value to newly created struct s_philo
-void	init_av(int ac, char **av, t_data *data)
-{
-	data->number_of_philosophers = ft_atoi(av[1]);
-	data->time_to_die = ft_atoi(av[2]);
-	data->time_to_eat = ft_atoi(av[3]);
-	data->time_to_sleep = ft_atoi(av[4]);
-	if (ac == 6)
-		data->number_of_meals = ft_atoi(av[5]);
-	else
-		data->number_of_meals = -1;
-	data->tid = malloc(sizeof(pthread_t) * data->number_of_philosophers);
-	if (!data->tid)
-		return ;
-	data->philos = malloc (sizeof(t_philo) * data->number_of_philosophers);
-	if (!data->philos)
-		return ;
-	pthread_mutex_init(&data->write, NULL);
-	pthread_mutex_init(&data->lock, NULL);
-	if (!data->philos)
-		return ;
-}
-
-// this function fills in the info for every philo in the program
-void	init_philos(t_data *data)
-{
-	int	i;
-
-	i = 0;
-	while(i < data->number_of_philosophers)
-	{
-		data->philos[i].data = data;
-		data->philos[i].id = i + 1;
-		data->philos[i].eating = 0;
-		data->philos[i].meals_eaten = 0;
-		data->philos[i].dead = 0;
-		data->philos[i].time_to_die = data->time_to_die;
-		data->program_end = 0;
-		data->philos_finished_eating = 0;
-		pthread_mutex_init(&data->philos[i].lock, NULL);
-		i++;
-	}
-}
-
-// this function inits forks (1 fork per philo) and protect each one with a mutex
-void	init_forks(t_data *data)
-{
-	int	i;
-
-	i = 0;
-	data->forks = malloc(sizeof(pthread_mutex_t) * data->number_of_philosophers);
-	if (!data->forks)
-		return ;
-	while(i < data->number_of_philosophers)
-		pthread_mutex_init(&data->forks[i++], NULL);
-	data->philos[0].left_fork = &data->forks[0];
-	data->philos[0].right_fork = &data->forks[data->number_of_philosophers - 1];
-	i = 1;
-	while (i < data->number_of_philosophers)
-	{
-		data->philos[i].left_fork = &data->forks[i];
-		data->philos[i].right_fork = &data->forks[i - 1];
-		i++;
-	}
-}
-
-long long unsigned	get_time(void)
-{
-	struct timeval	tv;
-
-	if (gettimeofday(&tv, NULL))
-		return (-1);
-	return ((tv.tv_sec * (long long unsigned int)1000) + (tv.tv_usec / 1000));
-}
-
-int	ft_usleep(long long unsigned time)
-{
-	long long unsigned	start;
-
-	start = get_time();
-	while ((get_time() - start) < time)
-		usleep(time / 10);
-	return (0);
-}
-void	take_forks(t_philo *philo)
-{
-	if (philo->id % 2 == 0)
-	{
-		pthread_mutex_lock(philo->left_fork);
-		message("has taken a fork", philo);
-		pthread_mutex_lock(philo->right_fork);
-		message("has taken a fork", philo);
-	}
-	else
-	{
-		pthread_mutex_lock(philo->right_fork);
-		message("has taken a fork", philo);
-		pthread_mutex_lock(philo->left_fork);
-		message("has taken a fork", philo);
-	}
-}
-
-void	eat(t_philo *philo)
-{
-	take_forks(philo);
-	pthread_mutex_lock(&philo->lock);
-	philo->eating = 1;
-	message("is eating", philo);
-	philo->time_to_die = philo->data->time_to_die + get_time();
-	ft_usleep(philo->data->time_to_eat);
-	philo->eating = 0;
-	philo->meals_eaten++;
-	pthread_mutex_unlock(&philo->lock);
-	pthread_mutex_unlock(philo->left_fork);
-	pthread_mutex_unlock(philo->right_fork);
-	message("is sleeping", philo);
-	if (philo->data->number_of_meals != -1)
-	{
-		pthread_mutex_lock(&philo->data->lock);
-		if (philo->meals_eaten == philo->data->number_of_meals)
-			philo->data->philos_finished_eating++;
-		if (philo->data->philos_finished_eating >= philo->data->number_of_philosophers)
-			philo->data->program_end = 1;
-		pthread_mutex_unlock(&philo->data->lock);
-	}
-	ft_usleep(philo->data->time_to_sleep);
-}
-
-void	message(char *str, t_philo *philo)
-{
-	long long unsigned int	time;
-
-	pthread_mutex_lock(&philo->data->lock);
-	pthread_mutex_lock(&philo->data->write);
-	time = get_time() - philo->data->start_time;
-	if (ft_strcmp("died", str) == 0 && philo->data->program_end == 0)
-	{
-		printf("%llu %d %s\n", time, philo->id, str);
-		philo->data->program_end = 1;
-	}
-	if (philo->data->program_end == 0)
-		printf("%llu %d %s\n", time, philo->id, str);
-	pthread_mutex_unlock(&philo->data->write);
-	pthread_mutex_unlock(&philo->data->lock);
-}
-
-int	is_finished(t_philo *philo)
-{
-	pthread_mutex_lock(&philo->data->lock);
-	if (philo->data->program_end == 0)
-	{
-		pthread_mutex_unlock(&philo->data->lock);
-		return(1);
-	}
-	pthread_mutex_unlock(&philo->data->lock);
-	return (0);
-}
 
 void *supervisor(void *philo_pointer)
 {
@@ -209,8 +39,6 @@ void	*routine(void *philo_pointer)
 		return ((void *)0);
 	while(is_finished(philo))
 	{
-		if (philo->data->number_of_philosophers % 2 == 1)
-			usleep(10);
 		eat(philo);
 		message("is thinking", philo);
 	}
@@ -219,40 +47,14 @@ void	*routine(void *philo_pointer)
 	return (NULL);
 }
 
-void	destroy(t_data *data)
-{
-	if (data)
-	{
-		if (data->tid)
-			free (data->tid);
-		if (data->philos)
-			free (data->philos);
-		if (data->forks)
-			free (data->forks);
-	}
-	return ;
-}
-
-void	case_one(t_data *data)
-{
-	printf("0 1 has taken a fork\n");
-	ft_usleep(data->time_to_die);
-	printf("%llu 1 has died\n", data->time_to_die);
-	return ;
-}
-
 int	main(int ac, char **av)
 {
 	t_data	data;
 	int i;
 
 	i = 0;
-	if (ac < 5 || ac > 6)
-	{
-		printf("Error: Wrong number of arguments\n");
-		return (1);
-	}
-	init_av(ac, av, &data); // need to check if args are numbers
+	if (check_args(ac, av) == -1 || init_av(ac, av, &data) == -1)
+		return (-1);
 	if (data.number_of_philosophers == 1)
 	{
 		case_one(&data);
@@ -275,6 +77,7 @@ int	main(int ac, char **av)
 			return (-1);
 		i++;
 	}
+	printf("arg2: %d\n", data.time_to_die);
 	destroy(&data);
 	return (0);
 }

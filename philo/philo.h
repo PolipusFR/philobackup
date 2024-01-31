@@ -6,7 +6,7 @@
 /*   By: lsabatie <lsabatie@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/10/19 18:15:24 by lsabatie          #+#    #+#             */
-/*   Updated: 2024/01/26 03:05:20 by lsabatie         ###   ########.fr       */
+/*   Updated: 2024/01/31 03:28:32 by lsabatie         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -39,10 +39,10 @@ typedef struct	s_data
 {
 	pthread_t	*tid;
 	t_philo	*philos;
-	int	program_end; // the program should end, either a philo died or they ate enough
-    int philos_finished_eating; // number of philos that ate the correct number of meals
+	int	program_end;
+    int philos_finished_eating;
 	int	number_of_philosophers;
-	long long unsigned int	time_to_die;
+	int	time_to_die;
 	int	time_to_eat;
 	int	time_to_sleep;
 	int	number_of_meals;
@@ -56,4 +56,22 @@ typedef struct	s_data
 
 
 int	ft_atoi(const char *str);
+void	message(char *str, t_philo *philo);
+int	check_args(int ac, char **av);
+
+int	init_av(int ac, char **av, t_data *data);
+void	init_philos(t_data *data);
+void	init_forks(t_data *data);
+
+int	ft_strcmp(char *s1, char *s2);
+long long unsigned	get_time(void);
+int	ft_usleep(long long unsigned time);
+void	case_one(t_data *data);
+void	destroy(t_data *data);
+
+void	take_forks(t_philo *philo);
+void	eat(t_philo *philo);
+void	message(char *str, t_philo *philo);
+int	is_finished(t_philo *philo);
+
 #endif

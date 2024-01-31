@@ -1,8 +1,11 @@
 HEADER  := philo.h
 NAME	:= philo
 CC		:= gcc
-FLAGS	:= -Wall -Wextra -Werror
+FLAGS	:= -Wall -Wextra -Werror -g3
 SRCS	:=	main.c \
+			general_utils.c\
+			philo_utils.c\
+			init.c\
 			ft_atoi.c \
                           
 OBJS	:= $(SRCS:.c=.o)
