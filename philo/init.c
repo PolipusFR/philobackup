@@ -6,7 +6,7 @@
 /*   By: lsabatie <lsabatie@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/31 02:11:18 by lsabatie          #+#    #+#             */
-/*   Updated: 2024/01/31 03:31:40 by lsabatie         ###   ########.fr       */
+/*   Updated: 2024/02/01 04:57:57 by lsabatie         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,18 +18,17 @@ static int	is_valid_av(char **av)
 	int	j;
 
 	i = 1;
-
-	while(av[i])
-	{	
+	while (av[i])
+	{
 		j = 0;
 		if (av[i][0] == '0' && av[i][1] == '\0')
 			return (-1);
-		while(av[i][j])
+		while (av[i][j])
 		{
 			if (av[i][j] >= 48 && av[i][j] <= 57)
 				j++;
 			else
-				return(-1);
+				return (-1);
 		}
 		i++;
 	}
@@ -58,8 +57,8 @@ int	init_av(int ac, char **av, t_data *data)
 	data->time_to_die = ft_atoi(av[2]);
 	data->time_to_eat = ft_atoi(av[3]);
 	data->time_to_sleep = ft_atoi(av[4]);
-	if (ft_atoi(av[1]) <= 0 || ft_atoi(av[2]) <= 0 ||
-		ft_atoi(av[3]) <= 0 || ft_atoi(av[4]) <= 0)
+	if (ft_atoi(av[1]) <= 0 || ft_atoi(av[2]) <= 0
+		|| ft_atoi(av[3]) <= 0 || ft_atoi(av[4]) <= 0)
 	{
 		printf ("Error: Argument overflow");
 		return (-1);
@@ -86,7 +85,7 @@ void	init_philos(t_data *data)
 	int	i;
 
 	i = 0;
-	while(i < data->number_of_philosophers)
+	while (i < data->number_of_philosophers)
 	{
 		data->philos[i].data = data;
 		data->philos[i].id = i + 1;
@@ -106,10 +105,11 @@ void	init_forks(t_data *data)
 	int	i;
 
 	i = 0;
-	data->forks = malloc(sizeof(pthread_mutex_t) * data->number_of_philosophers);
+	data->forks = malloc(sizeof(pthread_mutex_t)
+			* data->number_of_philosophers);
 	if (!data->forks)
 		return ;
-	while(i < data->number_of_philosophers)
+	while (i < data->number_of_philosophers)
 		pthread_mutex_init(&data->forks[i++], NULL);
 	data->philos[0].left_fork = &data->forks[0];
 	data->philos[0].right_fork = &data->forks[data->number_of_philosophers - 1];

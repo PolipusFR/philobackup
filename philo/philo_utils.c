@@ -6,7 +6,7 @@
 /*   By: lsabatie <lsabatie@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/31 02:16:58 by lsabatie          #+#    #+#             */
-/*   Updated: 2024/01/31 02:37:52 by lsabatie         ###   ########.fr       */
+/*   Updated: 2024/02/01 04:55:27 by lsabatie         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -49,7 +49,8 @@ void	eat(t_philo *philo)
 		pthread_mutex_lock(&philo->data->lock);
 		if (philo->meals_eaten == philo->data->number_of_meals)
 			philo->data->philos_finished_eating++;
-		if (philo->data->philos_finished_eating >= philo->data->number_of_philosophers)
+		if (philo->data->philos_finished_eating
+			>= philo->data->number_of_philosophers)
 			philo->data->program_end = 1;
 		pthread_mutex_unlock(&philo->data->lock);
 	}
@@ -80,7 +81,7 @@ int	is_finished(t_philo *philo)
 	if (philo->data->program_end == 0)
 	{
 		pthread_mutex_unlock(&philo->data->lock);
-		return(1);
+		return (1);
 	}
 	pthread_mutex_unlock(&philo->data->lock);
 	return (0);

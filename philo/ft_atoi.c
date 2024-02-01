@@ -6,7 +6,7 @@
 /*   By: lsabatie <lsabatie@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/07/12 11:22:10 by lsabatie          #+#    #+#             */
-/*   Updated: 2024/01/31 03:16:14 by lsabatie         ###   ########.fr       */
+/*   Updated: 2024/02/01 04:49:01 by lsabatie         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,7 +32,7 @@ int	ft_atoi(const char *str)
 	int		i;
 	int		number;
 	char	*string;
-	
+
 	i = 0;
 	string = (char *)str;
 	number = ft_caclulator(string, i);
