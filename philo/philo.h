@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   philo.h                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: lsabatie <lsabatie@student.42.fr>          +#+  +:+       +#+        */
+/*   By: lsabatie <lsabatie@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/10/19 18:15:24 by lsabatie          #+#    #+#             */
-/*   Updated: 2024/02/02 04:02:32 by lsabatie         ###   ########.fr       */
+/*   Updated: 2024/02/02 11:21:29 by lsabatie         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -63,7 +63,6 @@ void				init_forks(t_data *data);
 
 int					ft_strcmp(char *s1, char *s2);
 long long unsigned	get_time(void);
-int					ft_usleep(long long unsigned time);
 void				destroy(t_data *data);
 
 void				take_forks(t_philo *philo);

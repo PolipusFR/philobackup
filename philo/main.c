@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   main.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: lsabatie <lsabatie@student.42.fr>          +#+  +:+       +#+        */
+/*   By: lsabatie <lsabatie@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/10/19 18:13:48 by lsabatie          #+#    #+#             */
-/*   Updated: 2024/02/02 04:09:01 by lsabatie         ###   ########.fr       */
+/*   Updated: 2024/02/02 12:13:20 by lsabatie         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -36,18 +36,14 @@ void	*routine(void *philo_pointer)
 	if (philo->data->number_of_philosophers == 1)
 	{
 		message("has taken a fork", philo);
-		ft_usleep(philo->data->time_to_die);
+		usleep(philo->data->time_to_die * 1000);
 		message("died", philo);
 	}
-	if (pthread_create(&philo->thread, NULL, &supervisor, philo))
-		return ((void *)0);
 	while (is_finished(philo))
 	{
 		eat(philo);
 		message("is thinking", philo);
 	}
-	if (!pthread_join(philo->thread, NULL))
-		return ((void *)1);
 	return (NULL);
 }
 
@@ -58,10 +54,15 @@ int	launch_and_join(t_data *data)
 	i = 0;
 	while (i < data->number_of_philosophers)
 	{
-		if (pthread_create(&data->tid[i], NULL, &routine, &data->philos[i]))
+		if (pthread_create(&data->tid[i], NULL, &routine
+				, &data->philos[i]) != 0)
 			return (-1);
 		i++;
 	}
+	if (pthread_create(&data->philos->thread, NULL, &supervisor
+			, data->philos) != 0)
+		return (-1);
+	usleep(1000);
 	i = 0;
 	while (i < data->number_of_philosophers)
 	{
@@ -69,19 +70,23 @@ int	launch_and_join(t_data *data)
 			return (-1);
 		i++;
 	}
+	if (pthread_join(data->philos->thread, NULL) != 0)
+		return (-1);
+	return (0);
 }
 
 int	main(int ac, char **av)
 {
-	t_data	data;
+	t_data		data;
+	pthread_t	supervisor;
 
 	if (check_args(ac, av) == -1 || init_av(ac, av, &data) == -1)
 		return (-1);
 	init_forks(&data);
 	init_philos(&data);
-	ft_usleep(10 * data.number_of_philosophers);
 	data.start_time = get_time();
-	launch_and_join(&data);
+	if (launch_and_join(&data) != 0)
+		return (-1);
 	destroy(&data);
 	return (0);
 }

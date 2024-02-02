@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   general_utils.c                                    :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: lsabatie <lsabatie@student.42.fr>          +#+  +:+       +#+        */
+/*   By: lsabatie <lsabatie@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/31 02:14:34 by lsabatie          #+#    #+#             */
-/*   Updated: 2024/02/02 04:02:20 by lsabatie         ###   ########.fr       */
+/*   Updated: 2024/02/02 11:21:22 by lsabatie         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,16 +29,6 @@ long long unsigned	get_time(void)
 	if (gettimeofday(&tv, NULL))
 		return (-1);
 	return ((tv.tv_sec * (long long unsigned int)1000) + (tv.tv_usec / 1000));
-}
-
-int	ft_usleep(long long unsigned time)
-{
-	long long unsigned	start;
-
-	start = get_time();
-	while ((get_time() - start) < time)
-		usleep(time / 10);
-	return (0);
 }
 
 void	destroy(t_data *data)
