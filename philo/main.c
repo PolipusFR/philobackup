@@ -6,7 +6,7 @@
 /*   By: lsabatie <lsabatie@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/10/19 18:13:48 by lsabatie          #+#    #+#             */
-/*   Updated: 2024/02/01 05:00:42 by lsabatie         ###   ########.fr       */
+/*   Updated: 2024/02/02 04:09:01 by lsabatie         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,8 +33,12 @@ void	*routine(void *philo_pointer)
 
 	philo = philo_pointer;
 	philo->time_to_die = philo->data->time_to_die + get_time();
-	if (philo->id % 2 == 0)
-		ft_usleep(10);
+	if (philo->data->number_of_philosophers == 1)
+	{
+		message("has taken a fork", philo);
+		ft_usleep(philo->data->time_to_die);
+		message("died", philo);
+	}
 	if (pthread_create(&philo->thread, NULL, &supervisor, philo))
 		return ((void *)0);
 	while (is_finished(philo))
@@ -73,14 +77,9 @@ int	main(int ac, char **av)
 
 	if (check_args(ac, av) == -1 || init_av(ac, av, &data) == -1)
 		return (-1);
-	if (data.number_of_philosophers == 1)
-	{
-		case_one(&data);
-		return (0);
-	}
 	init_forks(&data);
 	init_philos(&data);
-	ft_usleep(100);
+	ft_usleep(10 * data.number_of_philosophers);
 	data.start_time = get_time();
 	launch_and_join(&data);
 	destroy(&data);
