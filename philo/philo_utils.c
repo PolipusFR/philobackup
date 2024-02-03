@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   philo_utils.c                                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: lsabatie <lsabatie@student.42lyon.fr>      +#+  +:+       +#+        */
+/*   By: lsabatie <lsabatie@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/31 02:16:58 by lsabatie          #+#    #+#             */
-/*   Updated: 2024/02/02 11:20:12 by lsabatie         ###   ########.fr       */
+/*   Updated: 2024/02/03 10:46:58 by lsabatie         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,20 +30,8 @@ void	take_forks(t_philo *philo)
 	}
 }
 
-void	eat(t_philo *philo)
+static void	if_extra_param(t_philo *philo)
 {
-	take_forks(philo);
-	pthread_mutex_lock(&philo->lock);
-	philo->eating = 1;
-	message("is eating", philo);
-	philo->time_to_die = philo->data->time_to_die + get_time();
-	usleep(philo->data->time_to_eat * 1000);
-	pthread_mutex_unlock(philo->left_fork);
-	pthread_mutex_unlock(philo->right_fork);
-	philo->eating = 0;
-	philo->meals_eaten++;
-	pthread_mutex_unlock(&philo->lock);
-	message("is sleeping", philo);
 	if (philo->data->number_of_meals != -1)
 	{
 		pthread_mutex_lock(&philo->data->lock);
@@ -54,6 +42,26 @@ void	eat(t_philo *philo)
 			philo->data->program_end = 1;
 		pthread_mutex_unlock(&philo->data->lock);
 	}
+}
+
+void	eat(t_philo *philo)
+{
+	take_forks(philo);
+	pthread_mutex_lock(&philo->lock);
+	philo->eating = 1;
+	message("is eating", philo);
+	philo->time_to_die = philo->data->time_to_die + get_time();
+	if (philo->data->time_to_die < philo->data->time_to_eat)
+		usleep(philo->data->time_to_die * 1000);
+	else
+		usleep(philo->data->time_to_eat * 1000);
+	pthread_mutex_unlock(philo->left_fork);
+	pthread_mutex_unlock(philo->right_fork);
+	philo->eating = 0;
+	philo->meals_eaten++;
+	pthread_mutex_unlock(&philo->lock);
+	message("is sleeping", philo);
+	if_extra_param(philo);
 	usleep(philo->data->time_to_sleep * 1000);
 }
 
