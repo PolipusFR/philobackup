@@ -6,7 +6,7 @@
 /*   By: lsabatie <lsabatie@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/10/19 18:15:24 by lsabatie          #+#    #+#             */
-/*   Updated: 2024/02/02 11:21:29 by lsabatie         ###   ########.fr       */
+/*   Updated: 2024/02/05 14:55:36 by lsabatie         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -54,6 +54,7 @@ typedef struct s_data
 }	t_data;
 
 int					ft_atoi(const char *str);
+void				ft_usleep(long long unsigned int time);
 void				message(char *str, t_philo *philo);
 int					check_args(int ac, char **av);
 

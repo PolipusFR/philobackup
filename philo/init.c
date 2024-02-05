@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   init.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: lsabatie <lsabatie@student.42.fr>          +#+  +:+       +#+        */
+/*   By: lsabatie <lsabatie@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/31 02:11:18 by lsabatie          #+#    #+#             */
-/*   Updated: 2024/02/01 04:57:57 by lsabatie         ###   ########.fr       */
+/*   Updated: 2024/02/05 13:55:24 by lsabatie         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -75,8 +75,6 @@ int	init_av(int ac, char **av, t_data *data)
 		return (-1);
 	pthread_mutex_init(&data->write, NULL);
 	pthread_mutex_init(&data->lock, NULL);
-	if (!data->philos)
-		return (-1);
 	return (0);
 }
 

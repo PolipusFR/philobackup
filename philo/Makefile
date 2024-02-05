@@ -10,7 +10,7 @@ SRCS	:=	main.c \
                           
 OBJS	:= $(SRCS:.c=.o)
 
-%.o:%.c $(HEADER)clea
+%.o:%.c $(HEADER)
 	$(CC) $(FLAGS) -c $< -o $(<:.c=.o)
 
 RM		    := rm -f

@@ -3,14 +3,23 @@
 /*                                                        :::      ::::::::   */
 /*   philo_utils.c                                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: lsabatie <lsabatie@student.42.fr>          +#+  +:+       +#+        */
+/*   By: lsabatie <lsabatie@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/31 02:16:58 by lsabatie          #+#    #+#             */
-/*   Updated: 2024/02/03 10:46:58 by lsabatie         ###   ########.fr       */
+/*   Updated: 2024/02/05 15:03:18 by lsabatie         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "philo.h"
+
+void	ft_usleep(long long unsigned int time)
+{
+	long long unsigned int	stop;
+
+	stop = get_time() + time;
+	while (get_time() < stop)
+		usleep(10);
+}
 
 void	take_forks(t_philo *philo)
 {
@@ -52,9 +61,9 @@ void	eat(t_philo *philo)
 	message("is eating", philo);
 	philo->time_to_die = philo->data->time_to_die + get_time();
 	if (philo->data->time_to_die < philo->data->time_to_eat)
-		usleep(philo->data->time_to_die * 1000);
+		ft_usleep(philo->data->time_to_die);
 	else
-		usleep(philo->data->time_to_eat * 1000);
+		ft_usleep(philo->data->time_to_eat);
 	pthread_mutex_unlock(philo->left_fork);
 	pthread_mutex_unlock(philo->right_fork);
 	philo->eating = 0;
@@ -62,7 +71,7 @@ void	eat(t_philo *philo)
 	pthread_mutex_unlock(&philo->lock);
 	message("is sleeping", philo);
 	if_extra_param(philo);
-	usleep(philo->data->time_to_sleep * 1000);
+	ft_usleep(philo->data->time_to_sleep);
 }
 
 void	message(char *str, t_philo *philo)
