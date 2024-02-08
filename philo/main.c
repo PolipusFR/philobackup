@@ -6,7 +6,7 @@
 /*   By: lsabatie <lsabatie@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/10/19 18:13:48 by lsabatie          #+#    #+#             */
-/*   Updated: 2024/02/05 14:57:04 by lsabatie         ###   ########.fr       */
+/*   Updated: 2024/02/08 17:11:59 by lsabatie         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,30 +30,44 @@ void	*supervisor(void *philo_pointer)
 	return ((void *)0);
 }
 
-// int	program_should_end(t_data *data)
+// int	check_end_philo(t_philo *philo)
 // {
-// 	pthread_mutex_lock(&data->lock);
-// 	if (data->program_end == 1)
+// 	pthread_mutex_lock(&philo->lock);
+// 	if (get_time() >= philo->time_to_die && philo->eating == 0)
 // 	{
-// 		pthread_mutex_unlock(&data->lock);
+// 		message("died", philo);
 // 		return (1);
 // 	}
-// 	pthread_mutex_unlock(&data->lock);
+// 	pthread_mutex_unlock(&philo->lock);
 // 	return (0);
+// }
+
+// int	program_should_end(t_data *data)
+// {
+// 	int	i;
+
+// 	i = 0;
+// 	while (i < data->number_of_philosophers)
+// 	{
+// 		if (check_end_philo(&data->philos[i]))
+// 			return (1);
+// 		i++;
+// 	}
+// 	return(0);
 // }
 
 // void	*supervisor(void *data_pointer)
 // {
 // 	t_data	*data;
 	
-// 	data = (t_data *)data_pointer;
+// 	data = data_pointer;
 // 	while (1)
 // 	{
 // 		if (program_should_end(data) == 1)
-// 			return (NULL);
+// 			return ((void *)0);
 // 		usleep(1000);
 // 	}
-// 	return (NULL);
+// 	return ((void *)0);
 // }
 
 void	*routine(void *philo_pointer)
@@ -91,8 +105,8 @@ int	launch_threads(t_data *data)
 			return (-1);
 		i++;
 	}
-	if (pthread_create(&data->philos->thread, NULL, &supervisor
-			, data->philos) != 0)
+	if (pthread_create(&data->supervisor, NULL, &supervisor
+			, &data) != 0)
 		return (-1);
 	return (0);
 }
@@ -108,7 +122,7 @@ int join_threads(t_data *data)
 			return (-1);
 		i++;
 	}
-	if (pthread_join(data->philos->thread, NULL) != 0)
+	if (pthread_join(data->supervisor, NULL) != 0)
 		return (-1);
 	destroy(data);
 	return (0);
@@ -123,6 +137,7 @@ int	main(int ac, char **av)
 		return (-1);
 	init_forks(&data);
 	init_philos(&data);
+	ft_usleep(1000);
 	data.start_time = get_time();
 	if (launch_threads(&data) != 0)
 		return (EXIT_FAILURE);

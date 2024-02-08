@@ -6,7 +6,7 @@
 /*   By: lsabatie <lsabatie@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/10/19 18:15:24 by lsabatie          #+#    #+#             */
-/*   Updated: 2024/02/05 14:55:36 by lsabatie         ###   ########.fr       */
+/*   Updated: 2024/02/08 16:35:49 by lsabatie         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,12 +19,11 @@
 # include <stdio.h> // printf
 # include <unistd.h> // usleep
 
-struct	s_data;
+typedef struct	s_data	t_data;
 
 typedef struct s_philo
 {
-	pthread_t				thread;
-	struct s_data			*data;
+	t_data					*data;
 	int						id;
 	int						dead;
 	int						meals_eaten;
@@ -38,6 +37,7 @@ typedef struct s_philo
 typedef struct s_data
 {
 	pthread_t			*tid;
+	pthread_t			supervisor;
 	t_philo				*philos;
 	int					program_end;
 	int					philos_finished_eating;
