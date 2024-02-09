@@ -3,26 +3,50 @@
 /*                                                        :::      ::::::::   */
 /*   general_utils.c                                    :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: lsabatie <lsabatie@student.42lyon.fr>      +#+  +:+       +#+        */
+/*   By: lsabatie <lsabatie@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/31 02:14:34 by lsabatie          #+#    #+#             */
-/*   Updated: 2024/02/02 11:21:22 by lsabatie         ###   ########.fr       */
+/*   Updated: 2024/02/09 16:52:22 by lsabatie         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "philo.h"
 
-int	ft_strcmp(char *s1, char *s2)
+static int	ft_isdigit(char *str)
 {
-	int	i;
+	int i;
 
 	i = 0;
-	while (s1[i] && s1[i] == s2[i])
+	while (str[i])
+	{
+		if (str[i] < '0' || str[i] > '9')
+			return (0);
 		i++;
-	return (s1[i] - s2[i]);
+	}
+	return (1);
 }
 
-long long unsigned	get_time(void)
+int	check_args(int ac, char **av)
+{
+	int i;
+	int number;
+
+	i = 1;
+	while (i < ac)
+	{
+		if (!ft_isdigit(av[i]))
+			return (0);
+		number = ft_atoi(av[i]);
+		if (i == 1 && (number <= 0 || number > 200))
+			return (0);
+		if (i != 1 && number == -1)
+			return (0);
+		i++;
+	}
+	return (1);
+}
+
+time_t	get_time(void)
 {
 	struct timeval	tv;
 
@@ -31,16 +55,42 @@ long long unsigned	get_time(void)
 	return ((tv.tv_sec * (long long unsigned int)1000) + (tv.tv_usec / 1000));
 }
 
-void	destroy(t_data *data)
+int	ft_atoi(char *str)
 {
-	if (data)
+	int							i;
+	unsigned long long int		number;
+
+	i = 0;
+	number = 0;
+	while (str[i] && (str[i] >= '0' && str[i] <= '9'))
 	{
-		if (data->tid)
-			free (data->tid);
-		if (data->philos)
-			free (data->philos);
-		if (data->forks)
-			free (data->forks);
+		number = number * 10 + (str[i] - '0');
+		i++;
 	}
-	return ;
+	if (number > INT_MAX)
+		return (-1);
+	return (number);
+}
+
+void	*free_data(t_data *data)
+{
+	int	i;
+
+	i = 0;
+	if (!data)
+		return(NULL);
+	if (data->forks_mutex)
+		free(data->forks_mutex);
+	if (data->philos)
+	{
+		while (i < data->number_of_philosophers)
+		{
+			if (data->philos[i])
+				free(data->philos[i]);
+			i++;
+		}
+		free (data->philos);
+	}
+	free(data);
+	return (NULL);
 }

@@ -3,103 +3,45 @@
 /*                                                        :::      ::::::::   */
 /*   philo_utils.c                                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: lsabatie <lsabatie@student.42lyon.fr>      +#+  +:+       +#+        */
+/*   By: lsabatie <lsabatie@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/31 02:16:58 by lsabatie          #+#    #+#             */
-/*   Updated: 2024/02/05 15:03:18 by lsabatie         ###   ########.fr       */
+/*   Updated: 2024/02/09 15:59:26 by lsabatie         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "philo.h"
 
-void	ft_usleep(long long unsigned int time)
+void	ft_usleep(time_t time)
 {
-	long long unsigned int	stop;
+	time_t	stop;
 
 	stop = get_time() + time;
 	while (get_time() < stop)
 		usleep(10);
 }
 
-void	take_forks(t_philo *philo)
+void	message(char *str, int from_supervisor, t_philo *philo)
 {
-	if (philo->id % 2 == 0)
+	pthread_mutex_lock(&philo->data->write_mutex);
+	if (is_finished(philo->data) == 1 && from_supervisor == 0)
 	{
-		pthread_mutex_lock(philo->left_fork);
-		message("has taken a fork", philo);
-		pthread_mutex_lock(philo->right_fork);
-		message("has taken a fork", philo);
+		pthread_mutex_unlock(&philo->data->write_mutex);
+		return ;
 	}
-	else
-	{
-		pthread_mutex_lock(philo->right_fork);
-		message("has taken a fork", philo);
-		pthread_mutex_lock(philo->left_fork);
-		message("has taken a fork", philo);
-	}
+	printf("%ld %d %s\n", get_time() - philo->data->start_time,
+		philo->id + 1, str);
+	pthread_mutex_unlock(&philo->data->write_mutex);
 }
 
-static void	if_extra_param(t_philo *philo)
+int	is_finished(t_data *data)
 {
-	if (philo->data->number_of_meals != -1)
+	pthread_mutex_lock(&data->stop_mutex);
+	if (data->should_stop == 1)
 	{
-		pthread_mutex_lock(&philo->data->lock);
-		if (philo->meals_eaten == philo->data->number_of_meals)
-			philo->data->philos_finished_eating++;
-		if (philo->data->philos_finished_eating
-			>= philo->data->number_of_philosophers)
-			philo->data->program_end = 1;
-		pthread_mutex_unlock(&philo->data->lock);
-	}
-}
-
-void	eat(t_philo *philo)
-{
-	take_forks(philo);
-	pthread_mutex_lock(&philo->lock);
-	philo->eating = 1;
-	message("is eating", philo);
-	philo->time_to_die = philo->data->time_to_die + get_time();
-	if (philo->data->time_to_die < philo->data->time_to_eat)
-		ft_usleep(philo->data->time_to_die);
-	else
-		ft_usleep(philo->data->time_to_eat);
-	pthread_mutex_unlock(philo->left_fork);
-	pthread_mutex_unlock(philo->right_fork);
-	philo->eating = 0;
-	philo->meals_eaten++;
-	pthread_mutex_unlock(&philo->lock);
-	message("is sleeping", philo);
-	if_extra_param(philo);
-	ft_usleep(philo->data->time_to_sleep);
-}
-
-void	message(char *str, t_philo *philo)
-{
-	long long unsigned int	time;
-
-	pthread_mutex_lock(&philo->data->lock);
-	pthread_mutex_lock(&philo->data->write);
-	time = get_time() - philo->data->start_time;
-	if (ft_strcmp("died", str) == 0 && philo->data->program_end == 0)
-	{
-		printf("%llu %d %s\n", time, philo->id, str);
-		philo->data->program_end = 1;
-	}
-	if (philo->data->program_end == 0)
-		printf("%llu %d %s\n", time, philo->id, str);
-	pthread_mutex_unlock(&philo->data->write);
-	pthread_mutex_unlock(&philo->data->lock);
-}
-
-int	is_finished(t_philo *philo)
-{
-	pthread_mutex_lock(&philo->data->lock);
-	if (philo->data->program_end == 0)
-	{
-		pthread_mutex_unlock(&philo->data->lock);
+		pthread_mutex_unlock(&data->stop_mutex);
 		return (1);
 	}
-	pthread_mutex_unlock(&philo->data->lock);
+	pthread_mutex_unlock(&data->stop_mutex);
 	return (0);
 }
