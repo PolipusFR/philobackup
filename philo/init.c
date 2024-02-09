@@ -6,15 +6,14 @@
 /*   By: lsabatie <lsabatie@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/31 02:11:18 by lsabatie          #+#    #+#             */
-/*   Updated: 2024/02/09 16:17:31 by lsabatie         ###   ########.fr       */
+/*   Updated: 2024/02/09 17:47:03 by lsabatie         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "philo.h"
 
-static void assign_forks(t_philo *philo)
+static void	assign_forks(t_philo *philo)
 {
-	// verifier comprehension
 	philo->fork[0] = philo->id;
 	philo->fork[1] = (philo->id + 1) % philo->data->number_of_philosophers;
 	if (philo->id % 2)
@@ -30,10 +29,10 @@ static pthread_mutex_t	*init_forks(t_data *data)
 	int				i;
 
 	i = 0;
-	forks = malloc(sizeof(pthread_mutex_t)* data->number_of_philosophers);
+	forks = malloc(sizeof(pthread_mutex_t) * data->number_of_philosophers);
 	if (!forks)
-		return(error_void("Error: malloc init failed", data));
-	while(i < data->number_of_philosophers)
+		return (error_void("Error: malloc init failed", data));
+	while (i < data->number_of_philosophers)
 	{
 		if (pthread_mutex_init(&forks[i], 0) != 0)
 			return (error_void("Error: mutex init failed", data));
@@ -82,7 +81,7 @@ static t_philo	**init_philos(t_data *data)
 t_data	*init_data(int ac, char **av)
 {
 	t_data	*data;
-	
+
 	data = malloc (sizeof(t_data));
 	if (!data)
 		return (error_void("Error: mutex init failed", data));
@@ -102,8 +101,3 @@ t_data	*init_data(int ac, char **av)
 	data->should_stop = 0;
 	return (data);
 }
-
-
-
-
-

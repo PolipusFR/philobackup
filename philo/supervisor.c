@@ -6,7 +6,7 @@
 /*   By: lsabatie <lsabatie@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/10/19 13:52:34 by lsabatie          #+#    #+#             */
-/*   Updated: 2024/02/09 17:32:41 by lsabatie         ###   ########.fr       */
+/*   Updated: 2024/02/09 17:43:44 by lsabatie         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -43,7 +43,7 @@ static int	program_should_end(t_data *data)
 			return (1);
 		if (data->number_of_meals != -1)
 			if (data->philos[i]->meals_eaten < data->number_of_meals)
-			finished_eating = 0;
+				finished_eating = 0;
 		pthread_mutex_unlock(&data->philos[i]->time_mutex);
 		i++;
 	}
@@ -60,7 +60,7 @@ static int	program_should_end(t_data *data)
 void	*supervisor(void *data_pointer)
 {
 	t_data	*data;
-	
+
 	data = data_pointer;
 	if (data->number_of_meals == 0)
 		return (NULL);

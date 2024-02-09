@@ -6,7 +6,7 @@
 /*   By: lsabatie <lsabatie@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/10/19 18:15:24 by lsabatie          #+#    #+#             */
-/*   Updated: 2024/02/09 17:20:46 by lsabatie         ###   ########.fr       */
+/*   Updated: 2024/02/09 17:45:03 by lsabatie         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,10 +20,10 @@
 # include <stdio.h> // printf
 # include <unistd.h> // usleep
 
-typedef struct	s_philo	t_philo;
+typedef struct s_philo	t_philo;
 
 typedef struct s_data
-{	
+{
 	time_t				start_time;
 	int					number_of_philosophers;
 	pthread_t			supervisor;
@@ -49,8 +49,6 @@ typedef struct s_philo
 	t_data					*data;
 }	t_philo;
 
-
-
 int					ft_atoi(char *str);
 void				ft_usleep(time_t time);
 void				message(char *str, int from_supervisor, t_philo *philo);
@@ -61,8 +59,8 @@ int					check_args(int ac, char **av);
 void				*free_data(t_data *data);
 t_data				*init_data(int ac, char **av);
 int					is_finished(t_data *data);
-int     			error_int(char *str, t_data *data);
-void    			*error_void(char *str, t_data *data);
+int					error_int(char *str, t_data *data);
+void				*error_void(char *str, t_data *data);
 time_t				get_time(void);
 void				destroy(t_data *data);
 

@@ -6,7 +6,7 @@
 /*   By: lsabatie <lsabatie@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/10/19 18:13:48 by lsabatie          #+#    #+#             */
-/*   Updated: 2024/02/09 17:32:34 by lsabatie         ###   ########.fr       */
+/*   Updated: 2024/02/09 17:44:20 by lsabatie         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -35,15 +35,15 @@ static int	launch_threads(t_data *data)
 	{
 		if (pthread_create(&data->supervisor, NULL, &supervisor
 				, data) != 0)
-		return (error_int("Error: pthread create failed", data));
+			return (error_int("Error: pthread create failed", data));
 	}
 	return (0);
 }
 
-static void join_threads(t_data *data)
+static void	join_threads(t_data *data)
 {
 	int	i;
-	
+
 	i = 0;
 	while (i < data->number_of_philosophers)
 	{
@@ -61,7 +61,7 @@ int	main(int ac, char **av)
 
 	data = NULL;
 	if (ac < 5 || ac > 6)
-		return(1);
+		return (1);
 	if (!check_args(ac, av))
 		return (1);
 	data = init_data(ac, av);

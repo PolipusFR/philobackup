@@ -6,7 +6,7 @@
 /*   By: lsabatie <lsabatie@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/31 02:14:34 by lsabatie          #+#    #+#             */
-/*   Updated: 2024/02/09 16:52:22 by lsabatie         ###   ########.fr       */
+/*   Updated: 2024/02/09 17:46:04 by lsabatie         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,7 +14,7 @@
 
 static int	ft_isdigit(char *str)
 {
-	int i;
+	int	i;
 
 	i = 0;
 	while (str[i])
@@ -28,8 +28,8 @@ static int	ft_isdigit(char *str)
 
 int	check_args(int ac, char **av)
 {
-	int i;
-	int number;
+	int	i;
+	int	number;
 
 	i = 1;
 	while (i < ac)
@@ -78,7 +78,7 @@ void	*free_data(t_data *data)
 
 	i = 0;
 	if (!data)
-		return(NULL);
+		return (NULL);
 	if (data->forks_mutex)
 		free(data->forks_mutex);
 	if (data->philos)
