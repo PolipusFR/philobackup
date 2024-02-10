@@ -1,6 +1,5 @@
 HEADER  := philo.h
 NAME	:= philo
-CC		:= gcc
 FLAGS	:= -Wall -Wextra -Werror -pthread
 SRCS	:=	main.c \
 			general_utils.c\
@@ -14,8 +13,6 @@ OBJS	:= $(SRCS:.c=.o)
 
 %.o:%.c $(HEADER)
 	$(CC) $(FLAGS) -c $< -o $(<:.c=.o)
-
-RM		    := rm -f
 
 $(NAME):	$(OBJS) $(HEADER)
 			$(CC) $(FLAGS) -o $(NAME) $(OBJS)

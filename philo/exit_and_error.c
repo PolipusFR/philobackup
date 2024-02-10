@@ -6,7 +6,7 @@
 /*   By: lsabatie <lsabatie@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/09 15:29:48 by lsabatie          #+#    #+#             */
-/*   Updated: 2024/02/10 12:14:13 by lsabatie         ###   ########.fr       */
+/*   Updated: 2024/02/10 17:03:00 by lsabatie         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,7 +20,7 @@ int	error_main(char *str)
 
 int	error_int(char *str, t_data *data)
 {
-	free(data);
+	free_data(data);
 	printf("%s\n", str);
 	return (-1);
 }
