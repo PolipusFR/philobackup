@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   philo.h                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: lsabatie <lsabatie@student.42.fr>          +#+  +:+       +#+        */
+/*   By: lsabatie <lsabatie@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/10/19 18:15:24 by lsabatie          #+#    #+#             */
-/*   Updated: 2024/02/09 17:45:03 by lsabatie         ###   ########.fr       */
+/*   Updated: 2024/02/10 12:13:48 by lsabatie         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,11 +14,11 @@
 # define PHILO_H
 
 # include <pthread.h>
-# include <limits.h> // INT_MAX for atoi
-# include <stdlib.h> // malloc/free
-# include <sys/time.h> // gettimeofday
-# include <stdio.h> // printf
-# include <unistd.h> // usleep
+# include <limits.h>
+# include <stdlib.h>
+# include <sys/time.h>
+# include <stdio.h>
+# include <unistd.h>
 
 typedef struct s_philo	t_philo;
 
@@ -50,7 +50,7 @@ typedef struct s_philo
 }	t_philo;
 
 int					ft_atoi(char *str);
-void				ft_usleep(time_t time);
+void				ft_usleep(time_t time, t_data *data);
 void				message(char *str, int from_supervisor, t_philo *philo);
 void				wait_to_start(time_t start_time);
 void				*supervisor(void *data_pointer);
@@ -61,7 +61,9 @@ t_data				*init_data(int ac, char **av);
 int					is_finished(t_data *data);
 int					error_int(char *str, t_data *data);
 void				*error_void(char *str, t_data *data);
+int					error_main(char *str);
 time_t				get_time(void);
 void				destroy(t_data *data);
+void				think_odd(t_philo *philo);
 
 #endif

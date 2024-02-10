@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   main.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: lsabatie <lsabatie@student.42.fr>          +#+  +:+       +#+        */
+/*   By: lsabatie <lsabatie@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/10/19 18:13:48 by lsabatie          #+#    #+#             */
-/*   Updated: 2024/02/09 17:44:20 by lsabatie         ###   ########.fr       */
+/*   Updated: 2024/02/10 12:06:33 by lsabatie         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -61,14 +61,14 @@ int	main(int ac, char **av)
 
 	data = NULL;
 	if (ac < 5 || ac > 6)
-		return (1);
+		return (error_main("Error: Wrong number of arguments"));
 	if (!check_args(ac, av))
-		return (1);
+		return (error_main("Error: Non-valid arguments"));
 	data = init_data(ac, av);
 	if (!data)
-		return (1);
+		return (error_main("Error: Failed initializing data structure"));
 	if (launch_threads(data) != 0)
-		return (EXIT_FAILURE);
+		return (error_main("Error: Failed launching threads"));
 	join_threads(data);
-	return (EXIT_SUCCESS);
+	return (0);
 }

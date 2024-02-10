@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   routine.c                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: lsabatie <lsabatie@student.42.fr>          +#+  +:+       +#+        */
+/*   By: lsabatie <lsabatie@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/10/21 13:57:02 by lsabatie          #+#    #+#             */
-/*   Updated: 2024/02/09 17:47:13 by lsabatie         ###   ########.fr       */
+/*   Updated: 2024/02/10 11:56:26 by lsabatie         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,7 +27,7 @@ static void	eat(t_philo *philo)
 	pthread_mutex_lock(&philo->time_mutex);
 	philo->last_ate = get_time();
 	pthread_mutex_unlock(&philo->time_mutex);
-	ft_usleep(philo->data->time_to_eat);
+	ft_usleep(philo->data->time_to_eat, philo->data);
 	if (is_finished(philo->data) == 0)
 	{
 		pthread_mutex_lock(&philo->time_mutex);
@@ -37,7 +37,7 @@ static void	eat(t_philo *philo)
 	message("is sleeping", 0, philo);
 	pthread_mutex_unlock(&philo->data->forks_mutex[philo->fork[0]]);
 	pthread_mutex_unlock(&philo->data->forks_mutex[philo->fork[1]]);
-	ft_usleep(philo->data->time_to_sleep);
+	ft_usleep(philo->data->time_to_sleep, philo->data);
 }
 
 static void	think(t_philo *philo)
@@ -54,14 +54,14 @@ static void	think(t_philo *philo)
 	if (time_to_think > 600)
 		time_to_think = 200;
 	message("is thinking", 0, philo);
-	ft_usleep(time_to_think);
+	ft_usleep(time_to_think, philo->data);
 }
 
 static void	*routine_one(t_philo *philo)
 {
 	pthread_mutex_lock(&philo->data->forks_mutex[philo->fork[0]]);
 	message("has taken a fork", 0, philo);
-	ft_usleep(philo->data->time_to_die);
+	ft_usleep(philo->data->time_to_die, philo->data);
 	message("died", 0, philo);
 	pthread_mutex_unlock(&philo->data->forks_mutex[philo->fork[0]]);
 	return (NULL);
@@ -87,6 +87,7 @@ void	*routine(void *philo_pointer)
 	}
 	else if (philo->id % 2 == 1)
 		think(philo);
+	think_odd(philo);
 	while (is_finished(philo->data) == 0)
 	{
 		eat(philo);

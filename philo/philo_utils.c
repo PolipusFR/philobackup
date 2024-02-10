@@ -3,22 +3,20 @@
 /*                                                        :::      ::::::::   */
 /*   philo_utils.c                                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: lsabatie <lsabatie@student.42.fr>          +#+  +:+       +#+        */
+/*   By: lsabatie <lsabatie@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/31 02:16:58 by lsabatie          #+#    #+#             */
-/*   Updated: 2024/02/09 15:59:26 by lsabatie         ###   ########.fr       */
+/*   Updated: 2024/02/10 11:57:01 by lsabatie         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "philo.h"
 
-void	ft_usleep(time_t time)
+void	think_odd(t_philo *philo)
 {
-	time_t	stop;
-
-	stop = get_time() + time;
-	while (get_time() < stop)
-		usleep(10);
+	if (philo->data->number_of_philosophers % 2 == 1
+		&& philo->id == philo->data->number_of_philosophers - 1)
+		message("is thinking", 0, philo);
 }
 
 void	message(char *str, int from_supervisor, t_philo *philo)

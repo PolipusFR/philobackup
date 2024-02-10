@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   supervisor.c                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: lsabatie <lsabatie@student.42.fr>          +#+  +:+       +#+        */
+/*   By: lsabatie <lsabatie@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/10/19 13:52:34 by lsabatie          #+#    #+#             */
-/*   Updated: 2024/02/09 17:43:44 by lsabatie         ###   ########.fr       */
+/*   Updated: 2024/02/10 11:29:13 by lsabatie         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -67,7 +67,7 @@ void	*supervisor(void *data_pointer)
 	pthread_mutex_lock(&data->stop_mutex);
 	data->should_stop = 0;
 	pthread_mutex_unlock(&data->stop_mutex);
-	ft_usleep(100);
+	ft_usleep(100, data);
 	wait_to_start(data->start_time);
 	while (1)
 	{

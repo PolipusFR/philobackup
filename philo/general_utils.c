@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   general_utils.c                                    :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: lsabatie <lsabatie@student.42.fr>          +#+  +:+       +#+        */
+/*   By: lsabatie <lsabatie@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/31 02:14:34 by lsabatie          #+#    #+#             */
-/*   Updated: 2024/02/09 17:46:04 by lsabatie         ###   ########.fr       */
+/*   Updated: 2024/02/10 12:10:48 by lsabatie         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -37,8 +37,6 @@ int	check_args(int ac, char **av)
 		if (!ft_isdigit(av[i]))
 			return (0);
 		number = ft_atoi(av[i]);
-		if (i == 1 && (number <= 0 || number > 200))
-			return (0);
 		if (i != 1 && number == -1)
 			return (0);
 		i++;
@@ -52,7 +50,20 @@ time_t	get_time(void)
 
 	if (gettimeofday(&tv, NULL))
 		return (-1);
-	return ((tv.tv_sec * (long long unsigned int)1000) + (tv.tv_usec / 1000));
+	return ((tv.tv_sec * 1000) + (tv.tv_usec / 1000));
+}
+
+void	ft_usleep(time_t time, t_data *data)
+{
+	time_t	stop;
+
+	stop = get_time() + time;
+	while (get_time() < stop)
+	{
+		if (is_finished(data) == 1)
+			break ;
+		usleep(100);
+	}
 }
 
 int	ft_atoi(char *str)
@@ -70,27 +81,4 @@ int	ft_atoi(char *str)
 	if (number > INT_MAX)
 		return (-1);
 	return (number);
-}
-
-void	*free_data(t_data *data)
-{
-	int	i;
-
-	i = 0;
-	if (!data)
-		return (NULL);
-	if (data->forks_mutex)
-		free(data->forks_mutex);
-	if (data->philos)
-	{
-		while (i < data->number_of_philosophers)
-		{
-			if (data->philos[i])
-				free(data->philos[i]);
-			i++;
-		}
-		free (data->philos);
-	}
-	free(data);
-	return (NULL);
 }

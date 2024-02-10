@@ -8,7 +8,7 @@ SRCS	:=	main.c \
 			init.c\
 			supervisor.c\
 			routine.c\
-			error.c\
+			exit_and_error.c\
                           
 OBJS	:= $(SRCS:.c=.o)
 
