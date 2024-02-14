@@ -6,7 +6,7 @@
 /*   By: lsabatie <lsabatie@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/10/19 18:15:24 by lsabatie          #+#    #+#             */
-/*   Updated: 2024/02/10 12:13:48 by lsabatie         ###   ########.fr       */
+/*   Updated: 2024/02/14 13:20:36 by lsabatie         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -59,9 +59,8 @@ int					check_args(int ac, char **av);
 void				*free_data(t_data *data);
 t_data				*init_data(int ac, char **av);
 int					is_finished(t_data *data);
-int					error_int(char *str, t_data *data);
+int					error_int(char *str, t_data *data, int main);
 void				*error_void(char *str, t_data *data);
-int					error_main(char *str);
 time_t				get_time(void);
 void				destroy(t_data *data);
 void				think_odd(t_philo *philo);

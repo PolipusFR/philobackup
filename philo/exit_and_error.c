@@ -6,23 +6,21 @@
 /*   By: lsabatie <lsabatie@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/09 15:29:48 by lsabatie          #+#    #+#             */
-/*   Updated: 2024/02/10 17:03:00 by lsabatie         ###   ########.fr       */
+/*   Updated: 2024/02/14 13:35:02 by lsabatie         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "philo.h"
 
-int	error_main(char *str)
+int	error_int(char *str, t_data *data, int main)
 {
+	if (data)
+		free_data(data);
 	printf("%s\n", str);
-	return (1);
-}
-
-int	error_int(char *str, t_data *data)
-{
-	free_data(data);
-	printf("%s\n", str);
-	return (-1);
+	if (main == 1)
+		return (1);
+	else
+		return (-1);
 }
 
 void	*error_void(char *str, t_data *data)

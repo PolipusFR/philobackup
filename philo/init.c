@@ -6,7 +6,7 @@
 /*   By: lsabatie <lsabatie@student.42lyon.fr>      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/31 02:11:18 by lsabatie          #+#    #+#             */
-/*   Updated: 2024/02/10 11:21:05 by lsabatie         ###   ########.fr       */
+/*   Updated: 2024/02/14 13:21:34 by lsabatie         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -47,9 +47,9 @@ static int	init_mutex(t_data *data)
 	if (!data->forks_mutex)
 		return (0);
 	if (pthread_mutex_init(&data->stop_mutex, NULL) != 0)
-		return (error_int("Error: mutex init failed", data));
+		return (error_int("Error: mutex init failed", data, 0));
 	if (pthread_mutex_init(&data->write_mutex, NULL) != 0)
-		return (error_int("Error: mutex init failed", data));
+		return (error_int("Error: mutex init failed", data, 0));
 	return (1);
 }
 
